@@ -20,11 +20,11 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "",
+						"name": "beneficiary",
 						"type": "address"
 					}
 				],
-				"name": "beneficiaries",
+				"name": "VestingTokens",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -84,25 +84,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "beneficiary",
-						"type": "address"
-					}
-				],
-				"name": "getVestedTokens",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "_beneficiary",
 						"type": "address"
 					},
@@ -134,39 +115,7 @@
 				],
 				"name": "lockTokens",
 				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "noOfvestedTokens",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "owner",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -235,7 +184,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/vesting.sol": "Vesting"
+			"contracts/vesting.sol": "vesting"
 		},
 		"evmVersion": "paris",
 		"libraries": {},
@@ -258,11 +207,11 @@
 			]
 		},
 		"contracts/vesting.sol": {
-			"keccak256": "0x364a0293e4fc6c3177ba42127d7960b5b00b4899149e65657b8f2e5c6aac4acd",
+			"keccak256": "0xbd2eb3eb67662d0f3b6c85df9e212e673fcff82de23dc53ed4fc2300f8805d1e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ce7c697ba8c10019c4ad322d2c0ca6abf484f2fc9ddc200ae1a586150168ec34",
-				"dweb:/ipfs/QmSYn3WZLoNi2pw8GBwSEz497V88GHNVtbqdRBjw9PyHZH"
+				"bzz-raw://6f7f6d80796fa9824a560e38f1886091250fff59525a5f10f9382dc37fe7c804",
+				"dweb:/ipfs/QmZxCwosK9prtduSGSBS61SaiKdR4vvswYG1nLB9A6Qjb6"
 			]
 		}
 	},
