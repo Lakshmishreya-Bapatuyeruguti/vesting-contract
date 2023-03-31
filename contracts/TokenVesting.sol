@@ -80,5 +80,4 @@ contract TokenVesting{
        token.transfer(_beneficiary,tokensClaimed);
        emit ReleaseTokensEvent(_beneficiary, "Tokens are Released in account of beneficiary ");
     }
-
 }
