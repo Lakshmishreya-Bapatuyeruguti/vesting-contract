@@ -32,6 +32,81 @@
 				"type": "constructor"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "beneficiary",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "AddBeneficiaryEvent",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "beneficiary",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "LockTokensEvent",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "beneficiary",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "ReleaseTokensEvent",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_beneficiary",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokensToLock",
+						"type": "uint256"
+					}
+				],
+				"name": "addBeneficiary",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "cliff",
 				"outputs": [
@@ -221,11 +296,11 @@
 			]
 		},
 		"contracts/TokenVesting.sol": {
-			"keccak256": "0x5c688a7fda73a4a8cb5ad400ed1f2e3297365191098aca01f3f03dc4e8e61e3b",
+			"keccak256": "0x2a088ad6a75e9ee8f1f07ab4e3f8b77c0825b6fa6a5037acf96448874a7a24a0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1b20cc4aa5b0158b6b7f31ea6d89c19d01944e3509f395b13a7e474c09311657",
-				"dweb:/ipfs/QmdYC3J9mhm7yr79eH88LkQAd7nVk57GwrPPP5BMpDVnyS"
+				"bzz-raw://5f060c6de51d0ecf536aa23f56fddc71cc614c29ae385a224ed3c4d8d418c71c",
+				"dweb:/ipfs/QmNRtsCi9ymUHyoH2v9aGvuiVahzxz6BXwpUCdj6FYyQoC"
 			]
 		}
 	},
