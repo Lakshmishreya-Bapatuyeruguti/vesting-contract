@@ -54,7 +54,7 @@ contract TokenVesting{
         owner=msg.sender;
         beneficiaries[_beneficiary]=tokensAmount;
         totalTokens[_beneficiary]=beneficiaries[_beneficiary];
-        token.transfer(address(this),tokensAmount);
+        token.transferFrom(msg.sender,address(this),tokensAmount);
         emit LockTokensEvent(_beneficiary, "Tokens are Locked in smart contract ");
     }
 
@@ -65,11 +65,12 @@ contract TokenVesting{
         uint totalPeriods = duration[_beneficiary] / slicePeriod[_beneficiary];
         if (noOfPeriodsSinceStart >= totalPeriods ) {
             
-            return beneficiaries[_beneficiary];
+            return beneficiaries[_beneficiary] -releasedTokens[_beneficiary];
         } 
         else {
             uint tokensVestedInOnePeriod = beneficiaries[_beneficiary] / totalPeriods;
             uint tokensToBeVested = tokensVestedInOnePeriod * noOfPeriodsSinceStart;
+            tokensToBeVested=tokensToBeVested-releasedTokens[_beneficiary];
             return tokensToBeVested;
         }
     }
@@ -78,7 +79,8 @@ contract TokenVesting{
     function releaseTokens(address _beneficiary) isBeneficiaryOrContractOwner(_beneficiary) public { 
        uint tokensClaimed=releasableTokens(_beneficiary);
        require(tokensClaimed<=beneficiaries[_beneficiary],"Tokens Claiming are greater than tokens locked");
-       releasedTokens[_beneficiary]=tokensClaimed;
+       require(tokensClaimed>0,"Already Claimed");
+       releasedTokens[_beneficiary]+=tokensClaimed;
        token.transfer(_beneficiary,tokensClaimed);
        emit ReleaseTokensEvent(_beneficiary, "Tokens are Released in account of beneficiary ");
     }
