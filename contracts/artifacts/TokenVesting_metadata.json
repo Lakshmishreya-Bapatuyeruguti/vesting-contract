@@ -11,21 +11,6 @@
 						"internalType": "contract IERC20",
 						"name": "_token",
 						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_cliff",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_duration",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_slicePeriod",
-						"type": "uint256"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -142,6 +127,21 @@
 					{
 						"internalType": "uint256",
 						"name": "tokensAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_cliff",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_duration",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_slicePeriod",
 						"type": "uint256"
 					}
 				],
@@ -296,11 +296,11 @@
 			]
 		},
 		"contracts/TokenVesting.sol": {
-			"keccak256": "0x608d09a4a41e7fad69f805905cfeffffd5f15d995f24c0996aebaed42d2da10d",
+			"keccak256": "0x589427777d82a4f18610c3987e69af640a75b1a502169b9bd4efcd419462a8e6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b3da5fdcd74285179cd70e4ca4b8013f621e9d0d39553adb557eeb9dc7c7cef6",
-				"dweb:/ipfs/QmXiSv6tuhoLJZYMjwAbYZfimQ32By41hGjFJKZGSJzSxW"
+				"bzz-raw://259407a89b70f53ef69da7e73ae31c6a5cf723141bbc1ebedb6c18f56fe6d259",
+				"dweb:/ipfs/QmeUM8aDeZqVxLgn411AkmXUiebSvAJTt48NQjjpeycZGa"
 			]
 		}
 	},

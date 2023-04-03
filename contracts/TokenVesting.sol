@@ -15,13 +15,9 @@ contract TokenVesting{
     address owner;
     IERC20 public token;
 
-    constructor(IERC20 _token,uint _cliff,uint _duration,uint _slicePeriod){
+    constructor(IERC20 _token){
         token=_token;
-        duration=_duration;
-        cliff=_cliff;
-        slicePeriod=_slicePeriod;
-        startTime=block.timestamp;
-        owner=msg.sender;
+     
 
     }
 // Events
@@ -50,7 +46,12 @@ contract TokenVesting{
     }
 
 // Locking Tokens
-    function lockTokens(address _beneficiary,uint tokensAmount)  public {
+    function lockTokens(address _beneficiary,uint tokensAmount,uint _cliff,uint _duration,uint _slicePeriod)  public {
+        duration=_duration;
+        cliff=_cliff;
+        slicePeriod=_slicePeriod;
+        startTime=block.timestamp;
+        owner=msg.sender;
         beneficiaries[_beneficiary]=tokensAmount;
         totalTokens[_beneficiary]=beneficiaries[_beneficiary];
         token.transfer(address(this),tokensAmount);
@@ -62,7 +63,8 @@ contract TokenVesting{
         uint timeSinceStart = block.timestamp - startTime;
         uint noOfPeriodsSinceStart = timeSinceStart / slicePeriod;
         uint totalPeriods = duration / slicePeriod;
-        if (noOfPeriodsSinceStart >= totalPeriods) {
+        if (noOfPeriodsSinceStart >= totalPeriods ) {
+            
             return beneficiaries[_beneficiary];
         } 
         else {
