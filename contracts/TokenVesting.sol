@@ -17,7 +17,7 @@ contract TokenVesting{
 
     constructor(IERC20 _token){
         token=_token;
-     
+        owner=msg.sender;
 
     }
 // Events
@@ -32,7 +32,7 @@ contract TokenVesting{
     }
     modifier isBeneficiaryOrContractOwner(address _beneficiary){
         _;
-        require(beneficiaries[_beneficiary]>0 || msg.sender==owner,"Only Beneficiary Or Owner can Release Tokens");
+        require(beneficiaries[_beneficiary]>0 || msg.sender==owner,"Only Beneficiary Or Owner can Lock and Release Tokens");
     }
     modifier onlyOwner(){
         _;
@@ -46,12 +46,11 @@ contract TokenVesting{
     }
 
 // Locking Tokens
-    function lockTokens(address _beneficiary,uint tokensAmount,uint _cliff,uint _duration,uint _slicePeriod)  public {
+    function lockTokens(address _beneficiary,uint tokensAmount,uint _cliff,uint _duration,uint _slicePeriod) isBeneficiaryOrContractOwner(_beneficiary) public {
         duration[_beneficiary]=_duration;
         cliff[_beneficiary]=_cliff;
         slicePeriod[_beneficiary]=_slicePeriod;
         startTime[_beneficiary]=block.timestamp;
-        owner=msg.sender;
         beneficiaries[_beneficiary]=tokensAmount;
         totalTokens[_beneficiary]=beneficiaries[_beneficiary];
         token.transferFrom(msg.sender,address(this),tokensAmount);
