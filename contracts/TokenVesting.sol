@@ -5,11 +5,11 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TokenVesting{
 
-    uint public duration;
-    uint public cliff;
-    uint public slicePeriod;
-    uint public startTime;
-    mapping (address=>uint)beneficiaries;
+    mapping (address=>uint) public duration;
+    mapping (address=>uint) public cliff;
+    mapping (address=>uint) public slicePeriod;
+    mapping (address=>uint) public startTime;
+    mapping (address=>uint)public beneficiaries;
     mapping(address => uint256) public totalTokens;
     mapping(address => uint256) public releasedTokens;
     address owner;
@@ -26,9 +26,9 @@ contract TokenVesting{
     event ReleaseTokensEvent(address beneficiary, string message);
 
 // Modifiers
-    modifier cliffPeriodOver(){
+    modifier cliffPeriodOver(address _beneficiary){
         _;
-        require(block.timestamp>=cliff,"Wait Till Cliff period");
+        require(block.timestamp>=cliff[_beneficiary],"Wait Till Cliff period");
     }
     modifier isBeneficiaryOrContractOwner(address _beneficiary){
         _;
@@ -47,10 +47,10 @@ contract TokenVesting{
 
 // Locking Tokens
     function lockTokens(address _beneficiary,uint tokensAmount,uint _cliff,uint _duration,uint _slicePeriod)  public {
-        duration=_duration;
-        cliff=_cliff;
-        slicePeriod=_slicePeriod;
-        startTime=block.timestamp;
+        duration[_beneficiary]=_duration;
+        cliff[_beneficiary]=_cliff;
+        slicePeriod[_beneficiary]=_slicePeriod;
+        startTime[_beneficiary]=block.timestamp;
         owner=msg.sender;
         beneficiaries[_beneficiary]=tokensAmount;
         totalTokens[_beneficiary]=beneficiaries[_beneficiary];
@@ -59,10 +59,10 @@ contract TokenVesting{
     }
 
 // Calculate no. of eligible tokens to release
-    function releasableTokens(address _beneficiary) public view cliffPeriodOver returns(uint) {
-        uint timeSinceStart = block.timestamp - startTime;
-        uint noOfPeriodsSinceStart = timeSinceStart / slicePeriod;
-        uint totalPeriods = duration / slicePeriod;
+    function releasableTokens(address _beneficiary) public cliffPeriodOver(_beneficiary) view returns(uint) {
+        uint timeSinceStart = block.timestamp - startTime[_beneficiary];
+        uint noOfPeriodsSinceStart = timeSinceStart / slicePeriod[_beneficiary];
+        uint totalPeriods = duration[_beneficiary] / slicePeriod[_beneficiary];
         if (noOfPeriodsSinceStart >= totalPeriods ) {
             
             return beneficiaries[_beneficiary];

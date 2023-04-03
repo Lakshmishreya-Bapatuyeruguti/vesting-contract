@@ -92,7 +92,32 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "beneficiaries",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
 				"name": "cliff",
 				"outputs": [
 					{
@@ -105,7 +130,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
 				"name": "duration",
 				"outputs": [
 					{
@@ -202,7 +233,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
 				"name": "slicePeriod",
 				"outputs": [
 					{
@@ -215,7 +252,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
 				"name": "startTime",
 				"outputs": [
 					{
@@ -296,11 +339,11 @@
 			]
 		},
 		"contracts/TokenVesting.sol": {
-			"keccak256": "0x589427777d82a4f18610c3987e69af640a75b1a502169b9bd4efcd419462a8e6",
+			"keccak256": "0x8f701115a44e83f66c4aaf45c31b2f157a51ea4729b06c805e609c74fc71cd4c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://259407a89b70f53ef69da7e73ae31c6a5cf723141bbc1ebedb6c18f56fe6d259",
-				"dweb:/ipfs/QmeUM8aDeZqVxLgn411AkmXUiebSvAJTt48NQjjpeycZGa"
+				"bzz-raw://30ea41c2d82c125acd138a7336711f25cdcda5fdc2a29f064375f185a86518f7",
+				"dweb:/ipfs/QmSm8FJcR3VcuTqBV7xg56ebdfasqkAz6uQ1nt4ZBr9AvQ"
 			]
 		}
 	},
