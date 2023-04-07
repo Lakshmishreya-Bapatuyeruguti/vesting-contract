@@ -4,83 +4,80 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TokenVesting{
-
-    mapping (address=>uint) public duration;
-    mapping (address=>uint) public cliff;
-    mapping (address=>uint) public slicePeriod;
-    mapping (address=>uint) public startTime;
-    mapping (address=>uint)public beneficiaries;
-    mapping(address => uint256) public totalTokens;
-    mapping(address => uint256) public releasedTokens;
-    address owner;
-    IERC20 public token;
-
-    constructor(IERC20 _token){
-        token=_token;
-        owner=msg.sender;
-
+ 
+    struct BeneficiaryInfo{
+        uint vestingId;
+        uint duration;
+        uint cliff;
+        uint slicePeriod;
+        uint startTime;
+        mapping(uint=>mapping(IERC20=>uint)) particularTokenAmount;
+        mapping(uint=>mapping(IERC20=>uint)) releasedTokenAmount;
     }
+    
+    mapping (address=>BeneficiaryInfo)public beneficiaries;
+
 // Events
-    event AddBeneficiaryEvent (address beneficiary, string  message);
     event LockTokensEvent(address beneficiary, string  message);
     event ReleaseTokensEvent(address beneficiary, string message);
 
 // Modifiers
     modifier cliffPeriodOver(address _beneficiary){
         _;
-        require(block.timestamp>=cliff[_beneficiary],"Wait Till Cliff period");
+        require(block.timestamp>=beneficiaries[_beneficiary].cliff,"Wait Till Cliff period");
     }
-    modifier isBeneficiaryOrContractOwner(address _beneficiary){
+    modifier isBeneficiary(address _beneficiary){
         _;
-        require(beneficiaries[_beneficiary]>0 || msg.sender==owner,"Only Beneficiary Or Owner can Lock and Release Tokens");
+        require( msg.sender==_beneficiary,"Only Beneficiary can Lock and Release Tokens");
     }
-    modifier onlyOwner(){
-        _;
-        require(msg.sender==owner," Only Owner can Add benefeiciaries");
-    }
-
-// Adding Beneficiaries
-    function addBeneficiary(address _beneficiary,uint tokensToLock) onlyOwner public {
-        beneficiaries[_beneficiary]=tokensToLock;
-        emit AddBeneficiaryEvent(_beneficiary, "New Beneficiary Added");
-    }
-
+  
 // Locking Tokens
-    function lockTokens(address _beneficiary,uint tokensAmount,uint _cliff,uint _duration,uint _slicePeriod) isBeneficiaryOrContractOwner(_beneficiary) public {
-        duration[_beneficiary]=_duration;
-        cliff[_beneficiary]=_cliff;
-        slicePeriod[_beneficiary]=_slicePeriod;
-        startTime[_beneficiary]=block.timestamp;
-        beneficiaries[_beneficiary]=tokensAmount;
-        totalTokens[_beneficiary]=beneficiaries[_beneficiary];
-        token.transferFrom(msg.sender,address(this),tokensAmount);
-        emit LockTokensEvent(_beneficiary, "Tokens are Locked in smart contract ");
-    }
+    function lockTokens(address _beneficiaryAddress,uint _tokensAmount,uint _cliff,uint _duration,uint _slicePeriod,IERC20 _token) isBeneficiary(_beneficiaryAddress) public {
+
+        BeneficiaryInfo storage beneficiary=beneficiaries[_beneficiaryAddress];
+        beneficiary.duration=_duration;
+        beneficiary.cliff=_cliff;
+        beneficiary.slicePeriod=_slicePeriod;
+        beneficiary.startTime=block.timestamp;
+        beneficiary.particularTokenAmount[beneficiary.vestingId][_token]=_tokensAmount;
+        beneficiary.vestingId+=1;
+        _token.transferFrom(msg.sender,address(this),_tokensAmount);
+        emit LockTokensEvent(_beneficiaryAddress, "Tokens are Locked in smart contract ");     
+}
+
+// check tokens balance
+    function checkReleasedTokens(IERC20 _token, uint _id)public view returns (uint){
+        uint releasedTokens= beneficiaries[msg.sender].releasedTokenAmount[_id][_token];
+        return releasedTokens;
+
+}
 
 // Calculate no. of eligible tokens to release
-    function releasableTokens(address _beneficiary) public cliffPeriodOver(_beneficiary) view returns(uint) {
-        uint timeSinceStart = block.timestamp - startTime[_beneficiary];
-        uint noOfPeriodsSinceStart = timeSinceStart / slicePeriod[_beneficiary];
-        uint totalPeriods = duration[_beneficiary] / slicePeriod[_beneficiary];
+    function releasableTokens(address _beneficiary,IERC20 _token, uint _id) internal cliffPeriodOver(_beneficiary) view returns(uint) {
+        uint timeSinceStart = block.timestamp - beneficiaries[_beneficiary].startTime;
+        uint noOfPeriodsSinceStart = timeSinceStart/ beneficiaries[_beneficiary].slicePeriod;
+        uint durationTime=beneficiaries[_beneficiary].duration;
+        uint totalPeriods =durationTime / beneficiaries[_beneficiary].slicePeriod;
+        uint releasedTokens=beneficiaries[_beneficiary].releasedTokenAmount[_id][_token];
+        uint totalTokenAmount=beneficiaries[_beneficiary].particularTokenAmount[_id][_token];
         if (noOfPeriodsSinceStart >= totalPeriods ) {
-            
-            return beneficiaries[_beneficiary] -releasedTokens[_beneficiary];
+            return totalTokenAmount-releasedTokens;
         } 
         else {
-            uint tokensVestedInOnePeriod = beneficiaries[_beneficiary] / totalPeriods;
+            uint tokensVestedInOnePeriod =totalTokenAmount/ totalPeriods;
             uint tokensToBeVested = tokensVestedInOnePeriod * noOfPeriodsSinceStart;
-            tokensToBeVested=tokensToBeVested-releasedTokens[_beneficiary];
+            tokensToBeVested=tokensToBeVested-releasedTokens;
             return tokensToBeVested;
         }
     }
 
 // Release Tokens to beneficiary
-    function releaseTokens(address _beneficiary) isBeneficiaryOrContractOwner(_beneficiary) public { 
-       uint tokensClaimed=releasableTokens(_beneficiary);
-       require(tokensClaimed<=beneficiaries[_beneficiary],"Tokens Claiming are greater than tokens locked");
-       require(tokensClaimed>0,"Already Claimed");
-       releasedTokens[_beneficiary]+=tokensClaimed;
-       token.transfer(_beneficiary,tokensClaimed);
+    function releaseTokens(address _beneficiary,IERC20 _token, uint _id) isBeneficiary(_beneficiary) cliffPeriodOver(_beneficiary)public { 
+       uint tokensClaimed=releasableTokens(_beneficiary, _token,_id);
+       require(tokensClaimed<=beneficiaries[_beneficiary].particularTokenAmount[_id][_token],"Tokens Claiming are greater than tokens locked");
+       require(tokensClaimed>0,"Cannot Claim Now");
+        beneficiaries[_beneficiary].releasedTokenAmount[_id][_token]+=tokensClaimed;
+       _token.transfer(_beneficiary,tokensClaimed);
        emit ReleaseTokensEvent(_beneficiary, "Tokens are Released in account of beneficiary ");
     }
 }

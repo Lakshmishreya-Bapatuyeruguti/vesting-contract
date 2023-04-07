@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyERC20Token is ERC20, Ownable {
-    constructor() ERC20("shreyaToken", "STK") {}
+    constructor() ERC20("shreyaToken2", "STK2") {}
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);

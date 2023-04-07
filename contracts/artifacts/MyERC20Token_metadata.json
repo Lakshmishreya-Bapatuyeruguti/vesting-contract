@@ -470,11 +470,11 @@
 			]
 		},
 		"contracts/Token.sol": {
-			"keccak256": "0xe6e45181c0ab3b65eb416f594a036abcbef1401cd3148cf2728b549ea185e58f",
+			"keccak256": "0xdae924c244b555e24ebd82c0b795864e117974b276eeb71234d6562bfa837bfc",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5900128030f82b44046b3868d683a714369b6eabc4487a652717b13c39b5abb6",
-				"dweb:/ipfs/QmWGavsxgk9JvG3y95ZdhqD1YMZ8rTDgnTDUHmzvsf9jQ6"
+				"bzz-raw://8014d3bfd68b97eddfe0c918e23d8d8c09fb4ca95444d2862e88fb372cfc501b",
+				"dweb:/ipfs/QmQKbjmTkQR9Wr9hqoQhEKajQFM4gDzQNGPe266YVLJaV1"
 			]
 		}
 	},

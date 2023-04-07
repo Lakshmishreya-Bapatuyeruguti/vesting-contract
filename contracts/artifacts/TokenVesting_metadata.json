@@ -6,36 +6,6 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [
-					{
-						"internalType": "contract IERC20",
-						"name": "_token",
-						"type": "address"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "constructor"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "beneficiary",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "message",
-						"type": "string"
-					}
-				],
-				"name": "AddBeneficiaryEvent",
-				"type": "event"
-			},
-			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -77,24 +47,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_beneficiary",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tokensToLock",
-						"type": "uint256"
-					}
-				],
-				"name": "addBeneficiary",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "",
 						"type": "address"
 					}
@@ -103,45 +55,27 @@
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "",
+						"name": "vestingId",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "cliff",
-				"outputs": [
+					},
 					{
 						"internalType": "uint256",
-						"name": "",
+						"name": "duration",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "duration",
-				"outputs": [
+					},
 					{
 						"internalType": "uint256",
-						"name": "",
+						"name": "cliff",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "slicePeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "startTime",
 						"type": "uint256"
 					}
 				],
@@ -151,13 +85,37 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "_beneficiary",
+						"internalType": "contract IERC20",
+						"name": "_token",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "tokensAmount",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "checkReleasedTokens",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_beneficiaryAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_tokensAmount",
 						"type": "uint256"
 					},
 					{
@@ -174,6 +132,11 @@
 						"internalType": "uint256",
 						"name": "_slicePeriod",
 						"type": "uint256"
+					},
+					{
+						"internalType": "contract IERC20",
+						"name": "_token",
+						"type": "address"
 					}
 				],
 				"name": "lockTokens",
@@ -187,119 +150,21 @@
 						"internalType": "address",
 						"name": "_beneficiary",
 						"type": "address"
-					}
-				],
-				"name": "releasableTokens",
-				"outputs": [
+					},
+					{
+						"internalType": "contract IERC20",
+						"name": "_token",
+						"type": "address"
+					},
 					{
 						"internalType": "uint256",
-						"name": "",
+						"name": "_id",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_beneficiary",
-						"type": "address"
 					}
 				],
 				"name": "releaseTokens",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "releasedTokens",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "slicePeriod",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "startTime",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "token",
-				"outputs": [
-					{
-						"internalType": "contract IERC20",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "totalTokens",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			}
 		],
@@ -339,11 +204,11 @@
 			]
 		},
 		"contracts/TokenVesting.sol": {
-			"keccak256": "0xe32aaeb541d285aeccdfcf416d2e5369fdec8faf00b048bce85fd5415be8d496",
+			"keccak256": "0xdfa7f1ff1c7b0d198c21060402ab8b0e14b6c1219b09d2d4897e5cdd5464b0d7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fdfea7e8342ca27d6736f12fafe803ae6c6c355af8699bd9bdaf2b1a86141e20",
-				"dweb:/ipfs/QmNMPtQF3kdgb45Xdado5Y8jrs1M6pSAVKdoUQ7JszYqJg"
+				"bzz-raw://3f9ffbc8501e90c6a16c5550291fa0bb690fba4ccfa87911e12268a7d598aa73",
+				"dweb:/ipfs/QmTeQtjgcJQGANcgdLGMNMwgZ85kpTN1KteY8jVMLbA8un"
 			]
 		}
 	},
