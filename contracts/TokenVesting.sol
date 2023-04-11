@@ -3,81 +3,89 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+
 contract TokenVesting{
- 
-    struct BeneficiaryInfo{
+
+    struct VestingInfo{
         uint vestingId;
+        uint startTime;
         uint duration;
         uint cliff;
         uint slicePeriod;
-        uint startTime;
-        mapping(uint=>mapping(IERC20=>uint)) particularTokenAmount;
-        mapping(uint=>mapping(IERC20=>uint)) releasedTokenAmount;
+        uint tokensAmount;
+        uint releasedTokens;
     }
-    
-    mapping (address=>BeneficiaryInfo)public beneficiaries;
+    struct BeneficiaryInfo{
+        uint id;
+        mapping(IERC20 => VestingInfo[]) vestingSchedules;
+    }
+    mapping (address => BeneficiaryInfo) public beneficiaries;
 
-// Events
+    // Events
     event LockTokensEvent(address beneficiary, string  message);
-    event ReleaseTokensEvent(address beneficiary, string message);
+    event ReleaseTokensEvent(address beneficiary, uint amountReleased, string message);
 
-// Modifiers
-    modifier cliffPeriodOver(address _beneficiary){
-        _;
-        require(block.timestamp>=beneficiaries[_beneficiary].cliff,"Wait Till Cliff period");
+    // Modifiers
+    modifier cliffPeriodOver(address _beneficiary, IERC20 _token, uint _id){
+        require(block.timestamp >= beneficiaries[_beneficiary].vestingSchedules[_token][_id].cliff, "Wait Till Cliff period");
+         _;
     }
     modifier isBeneficiary(address _beneficiary){
-        _;
         require( msg.sender==_beneficiary,"Only Beneficiary can Lock and Release Tokens");
+         _;
     }
-  
-// Locking Tokens
+
+    // Locking Tokens of beneficiary
     function lockTokens(address _beneficiaryAddress,uint _tokensAmount,uint _cliff,uint _duration,uint _slicePeriod,IERC20 _token) isBeneficiary(_beneficiaryAddress) public {
+        require(_slicePeriod<=_duration &&_cliff<=_duration,"Slice period & cliff should be < Duration");
+        require(_tokensAmount>0,"Tokens to vest should be > 0");
+        VestingInfo[] storage vestingsOfToken = beneficiaries[_beneficiaryAddress].vestingSchedules[_token];
+        VestingInfo memory currentVesting= VestingInfo({
+            vestingId: vestingsOfToken.length,
+            startTime: block.timestamp,
+            duration: _duration,
+            cliff:block.timestamp+ _cliff,
+            slicePeriod: _slicePeriod,
+            tokensAmount: _tokensAmount,
+            releasedTokens: 0
+        });
+        vestingsOfToken.push(currentVesting);
+        _token.transferFrom(msg.sender, address(this), _tokensAmount);
+        emit LockTokensEvent(_beneficiaryAddress, "Tokens are Locked in smart contract ");
+    }
+      // Get Details of particular vesting of beneficiary
+      function getVestingDetails(address _beneficiaryAddress, IERC20 _token , uint _id )public view returns(VestingInfo memory){
+          return beneficiaries[_beneficiaryAddress].vestingSchedules[_token][_id];
+      }
 
-        BeneficiaryInfo storage beneficiary=beneficiaries[_beneficiaryAddress];
-        beneficiary.duration=_duration;
-        beneficiary.cliff=_cliff;
-        beneficiary.slicePeriod=_slicePeriod;
-        beneficiary.startTime=block.timestamp;
-        beneficiary.particularTokenAmount[beneficiary.vestingId][_token]=_tokensAmount;
-        beneficiary.vestingId+=1;
-        _token.transferFrom(msg.sender,address(this),_tokensAmount);
-        emit LockTokensEvent(_beneficiaryAddress, "Tokens are Locked in smart contract ");     
-}
-
-// check tokens balance
-    function checkReleasedTokens(IERC20 _token, uint _id)public view returns (uint){
-        uint releasedTokens= beneficiaries[msg.sender].releasedTokenAmount[_id][_token];
-        return releasedTokens;
-
-}
-
-// Calculate no. of eligible tokens to release
-    function releasableTokens(address _beneficiary,IERC20 _token, uint _id) internal cliffPeriodOver(_beneficiary) view returns(uint) {
-        uint timeSinceStart = block.timestamp - beneficiaries[_beneficiary].startTime;
-        uint noOfPeriodsSinceStart = timeSinceStart/ beneficiaries[_beneficiary].slicePeriod;
-        uint durationTime=beneficiaries[_beneficiary].duration;
-        uint totalPeriods =durationTime / beneficiaries[_beneficiary].slicePeriod;
-        uint releasedTokens=beneficiaries[_beneficiary].releasedTokenAmount[_id][_token];
-        uint totalTokenAmount=beneficiaries[_beneficiary].particularTokenAmount[_id][_token];
+    // Calculate no. of eligible tokens to release
+    function releasableTokens(address _beneficiary,IERC20 _token,uint _id) internal view  returns(uint) {
+        VestingInfo memory vestingInstance =  beneficiaries[_beneficiary].vestingSchedules[_token][_id];
+        uint timeSinceStart = block.timestamp - vestingInstance.startTime;
+        uint noOfPeriodsSinceStart = timeSinceStart/vestingInstance.slicePeriod;
+        uint totalPeriods =vestingInstance.duration /vestingInstance.slicePeriod;
+        uint releasedTokens=vestingInstance.releasedTokens;
+        uint totalTokenAmount=vestingInstance.tokensAmount;
         if (noOfPeriodsSinceStart >= totalPeriods ) {
             return totalTokenAmount-releasedTokens;
         } 
         else {
-            uint tokensVestedInOnePeriod =totalTokenAmount/ totalPeriods;
-            uint tokensToBeVested = tokensVestedInOnePeriod * noOfPeriodsSinceStart;
-            tokensToBeVested=tokensToBeVested-releasedTokens;
-            return tokensToBeVested;
+            uint tokensReleasedInOnePeriod =totalTokenAmount/ totalPeriods;
+            uint tokensToBeReleased = tokensReleasedInOnePeriod * noOfPeriodsSinceStart;
+            tokensToBeReleased=tokensToBeReleased-releasedTokens;
+            return tokensToBeReleased;
         }
     }
-
-// Release Tokens to beneficiary
-    function releaseTokens(address _beneficiary,IERC20 _token, uint _id) isBeneficiary(_beneficiary) cliffPeriodOver(_beneficiary)public { 
-       uint tokensClaimed=releasableTokens(_beneficiary, _token,_id);
-       require(tokensClaimed<=beneficiaries[_beneficiary].particularTokenAmount[_id][_token],"Tokens Claiming are greater than tokens locked");
-       require(tokensClaimed>0,"Cannot Claim Now");
-        beneficiaries[_beneficiary].releasedTokenAmount[_id][_token]+=tokensClaimed;
-       _token.transfer(_beneficiary,tokensClaimed);
-       emit ReleaseTokensEvent(_beneficiary, "Tokens are Released in account of beneficiary ");
+    
+    // Release  tokens to beneficiary
+    function releaseTokens(address _beneficiary, IERC20 _token,uint _id ,uint _claimAmount) isBeneficiary(_beneficiary) cliffPeriodOver(_beneficiary,_token,_id) public {
+        uint tokensToBeReleased = releasableTokens(_beneficiary, _token, _id);
+        require(tokensToBeReleased > 0, "No tokens for release");
+        require(_claimAmount<=tokensToBeReleased,"Claim Amount > Releasable tokens");
+        VestingInfo  storage vestingInstance =  beneficiaries[_beneficiary].vestingSchedules[_token][_id];
+        vestingInstance.releasedTokens += _claimAmount;
+        _token.transfer(_beneficiary, _claimAmount); 
+        emit ReleaseTokensEvent(_beneficiary, _claimAmount,"Tokens released to beneficiary");
     }
-}
+
+    }

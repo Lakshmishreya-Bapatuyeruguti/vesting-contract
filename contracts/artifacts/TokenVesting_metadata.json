@@ -35,6 +35,12 @@
 					},
 					{
 						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountReleased",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
 						"internalType": "string",
 						"name": "message",
 						"type": "string"
@@ -55,27 +61,7 @@
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "vestingId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "duration",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "cliff",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "slicePeriod",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "startTime",
+						"name": "id",
 						"type": "uint256"
 					}
 				],
@@ -84,6 +70,11 @@
 			},
 			{
 				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_beneficiaryAddress",
+						"type": "address"
+					},
 					{
 						"internalType": "contract IERC20",
 						"name": "_token",
@@ -95,12 +86,49 @@
 						"type": "uint256"
 					}
 				],
-				"name": "checkReleasedTokens",
+				"name": "getVestingDetails",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "vestingId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "startTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "duration",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "cliff",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "slicePeriod",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "tokensAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "releasedTokens",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct TokenVesting.VestingInfo",
 						"name": "",
-						"type": "uint256"
+						"type": "tuple"
 					}
 				],
 				"stateMutability": "view",
@@ -160,6 +188,11 @@
 						"internalType": "uint256",
 						"name": "_id",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_claimAmount",
+						"type": "uint256"
 					}
 				],
 				"name": "releaseTokens",
@@ -204,11 +237,11 @@
 			]
 		},
 		"contracts/TokenVesting.sol": {
-			"keccak256": "0xdfa7f1ff1c7b0d198c21060402ab8b0e14b6c1219b09d2d4897e5cdd5464b0d7",
+			"keccak256": "0xaed77e5f1c771eeb62b5c7a2817bdd9e9f6eddf792b4ec005a2b74e171826d95",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3f9ffbc8501e90c6a16c5550291fa0bb690fba4ccfa87911e12268a7d598aa73",
-				"dweb:/ipfs/QmTeQtjgcJQGANcgdLGMNMwgZ85kpTN1KteY8jVMLbA8un"
+				"bzz-raw://5e11e4f8fe58609cbaaac7795fafcf993a80450a372bee836c400ba19782d324",
+				"dweb:/ipfs/QmPtWUDRbSb4PmQnVQJSHSZq7cW8pbNDsHECJubV6qNkE4"
 			]
 		}
 	},
